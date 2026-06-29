@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Gauravi & Me 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --rose:#FF1744;--blush:#FF6B8A;--petal:#FFB3C6;
+  --deep:#2D0015;--void:#3A0020;--gold:#FFD4A8;
+  --glass:rgba(255,30,80,.13);--border:rgba(255,107,138,.30);
+}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(160deg,#3a0018 0%,#2a0012 40%,#1a000a 100%);color:#fff;font-family:'Cormorant Garamond',serif;overflow-x:hidden;cursor:none}
+
+/* custom cursor */
+.cursor{position:fixed;width:12px;height:12px;background:var(--rose);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s,width .2s,height .2s;mix-blend-mode:screen}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1px solid rgba(255,107,138,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .18s ease,width .2s,height .2s;mix-blend-mode:screen}
+
+/* ── STAR BG ── */
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ── PARTICLE CANVAS ── */
+#pcanvas{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+/* ── SECTIONS BASE ── */
+section{position:relative;z-index:2}
+
+/* ══════════ HERO ══════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:2rem;overflow:hidden;
+}
+.hero-tagline{
+  font-size:.78rem;letter-spacing:.45em;text-transform:uppercase;
+  color:var(--petal);opacity:.7;margin-bottom:2.2rem;
+  animation:fadeUp .9s ease both;
+}
+.hero-names{
+  font-family:'Dancing Script',cursive;font-weight:700;
+  font-size:clamp(3.5rem,12vw,8rem);line-height:1;
+  background:linear-gradient(130deg,#FF6B8A 0%,#FF1744 40%,#FFD4A8 80%,#FF6B8A 100%);
+  background-size:200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeUp .9s .12s ease both, shimmer 4s linear infinite;
+  filter:drop-shadow(0 0 60px rgba(255,23,68,.45));
+}
+.hero-ampersand{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(2rem,6vw,4rem);
+  -webkit-text-fill-color:rgba(255,179,198,.5);
+  display:block;margin:.2rem 0;
+}
+.hero-date{
+  margin-top:2rem;font-size:clamp(.9rem,2.5vw,1.15rem);
+  font-style:italic;color:var(--petal);opacity:.8;letter-spacing:.08em;
+  animation:fadeUp .9s .28s ease both;
+}
+.hero-scroll{
+  position:absolute;bottom:2.5rem;
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  color:rgba(255,107,138,.35);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+  animation:fadeUp .9s .5s ease both;
+}
+.hero-scroll i{display:block;animation:scrollBounce 2s ease infinite}
+
+/* ══════════ COUNTER ══════════ */
+#counter{padding:6rem 2rem;text-align:center}
+.section-eyebrow{
+  font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--blush);margin-bottom:1rem;opacity:.8;
+}
+.section-title{
+  font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:700;color:#fff;margin-bottom:.4rem;
+  line-height:1.2;
+}
+.section-title em{font-style:italic;color:var(--petal)}
+.counter-row{
+  display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin-top:3rem;
+}
+.c-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:1.4rem;padding:2.2rem 2rem;min-width:120px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 8px 40px rgba(255,23,68,.1),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.c-card:hover{transform:translateY(-8px);box-shadow:0 24px 60px rgba(255,23,68,.22)}
+.c-num{
+  font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,3.4rem);
+  font-weight:700;
+  background:linear-gradient(135deg,var(--blush),var(--rose));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:block;line-height:1;
+}
+.c-label{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--petal);margin-top:.6rem;opacity:.7}
+
+/* ══════════ 3D HEART ══════════ */
+#heart-section{padding:4rem 2rem;text-align:center}
+#heart-canvas{display:block;margin:2rem auto 0;filter:drop-shadow(0 0 80px rgba(255,23,68,.6))}
+
+/* ══════════ TIMELINE / MEMORIES ══════════ */
+#memories{padding:6rem 2rem;max-width:780px;margin:0 auto}
+.memory-grid{display:grid;gap:2rem;margin-top:3rem}
+
+.mem-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:1.8rem;padding:2.8rem;
+  backdrop-filter:blur(24px);
+  box-shadow:0 4px 40px rgba(0,0,0,.3);
+  position:relative;overflow:hidden;
+  transition:transform .4s ease,box-shadow .4s ease;
+}
+.mem-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(255,23,68,.18)}
+.mem-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,107,138,.06),transparent);
+  pointer-events:none;
+}
+.mem-icon{font-size:3rem;margin-bottom:1.2rem;display:block;line-height:1}
+.mem-tag{
+  font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--blush);margin-bottom:.8rem;display:block;opacity:.8;
+}
+.mem-title{
+  font-family:'Playfair Display',serif;font-size:1.6rem;
+  color:#fff;margin-bottom:1rem;line-height:1.2;
+}
+.mem-body{
+  font-size:1.1rem;line-height:1.9;color:rgba(255,179,198,.75);
+  font-style:italic;
+}
+
+/* ══════════ LETTER SECTION ══════════ */
+#letter-section{padding:6rem 2rem;max-width:720px;margin:0 auto}
+
+.letter-wrap{
+  background:linear-gradient(145deg,rgba(255,30,80,.09),rgba(255,107,138,.04));
+  border:1px solid var(--border);border-radius:2rem;
+  padding:4rem 3.5rem;
+  backdrop-filter:blur(30px);
+  box-shadow:0 0 120px rgba(255,23,68,.08),inset 0 1px 0 rgba(255,255,255,.05);
+  position:relative;overflow:hidden;
+}
+
+/* animated lip marks background */
+.lip-bg{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:.06;
+}
+.lip-mark{
+  position:absolute;font-size:2.5rem;
+  animation:lipFloat 8s ease-in-out infinite;
+  color:var(--rose);
+}
+
+.letter-seal{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,var(--rose),var(--blush));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;margin:0 auto 2.5rem;
+  box-shadow:0 0 40px rgba(255,23,68,.5);
+  animation:heartbeat 1.8s ease infinite;
+}
+.letter-heading{
+  font-family:'Dancing Script',cursive;font-size:clamp(2.2rem,5vw,3rem);
+  color:var(--rose);text-align:center;margin-bottom:2.5rem;
+  text-shadow:0 0 40px rgba(255,23,68,.4);
+}
+.letter-body p{
+  font-size:1.15rem;line-height:2.1;
+  color:rgba(255,210,220,.82);margin-bottom:1.4rem;
+}
+.letter-highlight{
+  background:rgba(255,23,68,.12);border-left:3px solid var(--rose);
+  border-radius:0 .8rem .8rem 0;padding:1.2rem 1.5rem;
+  margin:1.8rem 0;font-style:italic;color:var(--petal);font-size:1.18rem;
+  line-height:1.9;
+}
+
+/* ── LIP MARKS ON LETTER ── */
+.lip-marks-row{
+  display:flex;justify-content:center;gap:1.2rem;margin:2.5rem 0 1rem;
+  flex-wrap:wrap;
+}
+.lip-stamp{
+  font-size:2.2rem;
+  filter:drop-shadow(0 0 12px rgba(255,23,68,.7));
+  animation:lipPop .6s ease both;
+  cursor:pointer;transition:transform .2s;
+}
+.lip-stamp:hover{transform:scale(1.3) rotate(-8deg)}
+
+.letter-sign{
+  font-family:'Dancing Script',cursive;font-size:2rem;
+  color:var(--blush);text-align:right;margin-top:2.2rem;
+  text-shadow:0 0 20px rgba(255,107,138,.3);
+}
+
+/* ══════════ FOOTER ══════════ */
+footer{
+  position:relative;z-index:2;text-align:center;
+  padding:3rem 2rem 5rem;
+  color:rgba(255,107,138,.3);font-size:.85rem;letter-spacing:.12em;
+}
+footer strong{color:var(--rose)}
+.feedback-btn{
+  display:inline-block;margin-top:2.2rem;
+  font-family:'Dancing Script',cursive;font-size:1.35rem;
+  color:#fff;letter-spacing:.08em;
+  background:linear-gradient(135deg,var(--rose),var(--blush));
+  border:none;border-radius:999px;
+  padding:.8rem 2.4rem;cursor:pointer;
+  box-shadow:0 8px 30px rgba(255,23,68,.45);
+  text-decoration:none;
+  animation:pulse 2s ease infinite;
+  transition:transform .2s,box-shadow .2s;
+}
+.feedback-btn:hover{transform:scale(1.07);box-shadow:0 12px 40px rgba(255,23,68,.65)}
+
+/* ══════════ KEYFRAMES ══════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+@keyframes scrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes lipFloat{0%,100%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-18px) rotate(10deg)}}
+@keyframes lipPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@keyframes starTwinkle{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* ── NEXT BUTTON ── */
+.next-btn{
+  position:absolute;bottom:4.5rem;
+  background:linear-gradient(135deg,var(--rose),var(--blush));
+  color:#fff;border:none;border-radius:999px;
+  padding:.75rem 2.2rem;font-size:1rem;font-family:'Cormorant Garamond',serif;
+  letter-spacing:.1em;cursor:pointer;
+  box-shadow:0 8px 30px rgba(255,23,68,.45);
+  animation:fadeUp .9s .6s ease both, pulse 2s ease infinite;
+  transition:transform .2s,box-shadow .2s;
+}
+.next-btn:hover{transform:scale(1.07);box-shadow:0 12px 40px rgba(255,23,68,.6)}
+@keyframes pulse{0%,100%{box-shadow:0 8px 30px rgba(255,23,68,.45)}50%{box-shadow:0 8px 50px rgba(255,23,68,.75)}}
+
+/* ── SECTION NAV BTN ── */
+.sec-next{
+  display:block;margin:3rem auto 0;
+  background:transparent;border:1px solid var(--border);
+  color:var(--petal);border-radius:999px;
+  padding:.65rem 2rem;font-size:.95rem;font-family:'Cormorant Garamond',serif;
+  letter-spacing:.1em;cursor:pointer;
+  transition:background .2s,color .2s,transform .2s;
+}
+.sec-next:hover{background:var(--rose);color:#fff;transform:scale(1.05);border-color:var(--rose)}
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .85s ease,transform .85s ease}
+.revealed{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .letter-wrap{padding:2.5rem 1.6rem}
+  .c-card{padding:1.6rem 1.2rem;min-width:90px}
+}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+
+<!-- Starfield -->
+<canvas id="starfield"></canvas>
+
+<!-- Particles -->
+<canvas id="pcanvas"></canvas>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <p class="hero-tagline">8 February 2025 · 1.4 Years of Pure Love</p>
+  <h1 class="hero-names">
+    Gauravi
+    <span class="hero-ampersand">&amp;</span>
+    Hemendra
+  </h1>
+  <p class="hero-date">"Some love stories don't have endings — ours is still being written 🌹"</p>
+  <div class="hero-scroll">
+    <i>↓</i>
+    scroll
+  </div>
+  <button class="next-btn" onclick="document.getElementById('counter').scrollIntoView({behavior:'smooth'})">
+    Next ↓
+  </button>
+</section>
+
+<!-- ══════════ COUNTER ══════════ -->
+<section id="counter">
+  <p class="section-eyebrow reveal">Since 8 Feb 2025</p>
+  <h2 class="section-title reveal">Every second with you is <em>precious</em></h2>
+  <div class="counter-row">
+    <div class="c-card reveal"><span class="c-num" id="cd">0</span><div class="c-label">Days</div></div>
+    <div class="c-card reveal"><span class="c-num" id="ch">00</span><div class="c-label">Hours</div></div>
+    <div class="c-card reveal"><span class="c-num" id="cm">00</span><div class="c-label">Minutes</div></div>
+    <div class="c-card reveal"><span class="c-num" id="cs">00</span><div class="c-label">Seconds</div></div>
+  </div>
+  <button class="sec-next reveal" onclick="document.getElementById('heart-section').scrollIntoView({behavior:'smooth'})">Next ↓</button>
+</section>
+<section id="heart-section">
+  <p class="section-eyebrow reveal">My heart for you</p>
+  <canvas id="heart-canvas" width="400" height="360"></canvas>
+  <button class="sec-next reveal" onclick="document.getElementById('memories').scrollIntoView({behavior:'smooth'})">Next ↓</button>
+</section>
+
+<!-- ══════════ MEMORIES ══════════ -->
+<section id="memories">
+  <p class="section-eyebrow reveal">Moments I hold closest</p>
+  <h2 class="section-title reveal">Our <em>forever</em> memories</h2>
+  <div class="memory-grid">
+
+    <div class="mem-card reveal">
+      <span class="mem-icon">💋</span>
+      <span class="mem-tag">First Kiss</span>
+      <h3 class="mem-title">When time froze</h3>
+      <p class="mem-body">
+        That one magical moment — lip to lip — when the whole universe paused just for us. 
+        Before it, I didn't know what complete felt like. After it, I never wanted to un-feel it.
+        That kiss lives in me like a heartbeat. Always.
+      </p>
+    </div>
+
+    <div class="mem-card reveal">
+      <span class="mem-icon">💌</span>
+      <span class="mem-tag">The Letter</span>
+      <h3 class="mem-title">When you told me I mattered</h3>
+      <p class="mem-body">
+        You wrote me a letter — in your own hand — and pressed your lips onto the paper, 
+        leaving marks only I would ever touch. You told me how much I mean to you, 
+        how deeply I matter in your world. No gift will ever come close. 
+        That letter is the most precious thing I own.
+      </p>
+    </div>
+
+    <div class="mem-card reveal">
+      <span class="mem-icon">⌚</span>
+      <span class="mem-tag">Your Gift to Me</span>
+      <h3 class="mem-title">The watch that lives on my wrist — and in my heart</h3>
+      <p class="mem-body">
+        When you gifted me that watch, you gave me so much more than time. 
+        Every second it ticks, it whispers your name. It is not just my best watch — 
+        it is my most treasured possession. And no matter what watch I ever wear 
+        in the future, this one will always be the one that matters most. 
+        Always on my wrist. Always close to me. Just like you.
+      </p>
+    </div>
+
+  </div>
+  <button class="sec-next reveal" onclick="document.getElementById('letter-section').scrollIntoView({behavior:'smooth'})">Next ↓</button>
+</section>
+<section id="letter-section">
+  <p class="section-eyebrow reveal">Written from the heart</p>
+  <div class="letter-wrap reveal">
+
+    <!-- floating lip marks bg -->
+    <div class="lip-bg" id="lipBg"></div>
+
+    <div class="letter-seal">💌</div>
+    <h2 class="letter-heading">My Dearest Gauravi,</h2>
+
+    <div class="letter-body">
+      <p>
+        Since the 8th of February 2025, you have been the single most beautiful 
+        thing that has ever walked into my life. Not because of one moment — 
+        but because of every small, ordinary, extraordinary moment in between.
+      </p>
+
+      <div class="letter-highlight">
+        "You wrote me a letter once. With your own hands. And you pressed your lips 
+        onto the paper — leaving marks that only I could ever hold. That day, I realised 
+        what it means to be truly seen by someone."
+      </div>
+
+      <p>
+        In that letter, you told me I matter. That I am important to you.
+        Words I will carry for the rest of my life.
+        No trophy, no achievement — nothing will ever feel as valuable 
+        as knowing that I matter to <em>you</em>.
+      </p>
+
+      <p>
+        Our first kiss, your letter, your laugh, your voice at night — 
+        these are the things I would choose over everything else in the world.
+        1.4 years in, and I fall a little more every single day.
+      </p>
+
+      <p>
+        So today, on this little anniversary of ours — I just want you to know: 
+        you are not just my girlfriend. You are my home. My peace. My favourite person. 
+        And I am never, ever letting go.
+      </p>
+    </div>
+
+    <!-- Lip marks stamp row -->
+    <div class="lip-marks-row" id="lipRow">
+      <span class="lip-stamp" style="animation-delay:.1s">💋</span>
+      <span class="lip-stamp" style="animation-delay:.22s">💋</span>
+      <span class="lip-stamp" style="animation-delay:.34s">💋</span>
+      <span class="lip-stamp" style="animation-delay:.46s">💋</span>
+      <span class="lip-stamp" style="animation-delay:.58s">💋</span>
+    </div>
+
+    <div class="letter-sign">— Forever yours, Hemendra 🌹</div>
+  </div>
+</section>
+
+<footer>
+  Made with <strong>♥</strong> by Hemendra, for Gauravi &nbsp;·&nbsp; 8 Feb 2025 → ∞
+  <br>
+  <button class="feedback-btn" onclick="openFeedback()">Click Here 💌</button>
+</footer>
+
+<!-- ══════════ FEEDBACK PAGE OVERLAY ══════════ -->
+<div id="feedbackPage" style="display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#3a0018 0%,#2a0012 40%,#1a000a 100%);overflow-y:auto;padding:3rem 1.5rem 5rem;">
+  <div style="max-width:560px;margin:0 auto;text-align:center;">
+    <div style="width:64px;height:64px;background:linear-gradient(135deg,#FF1744,#FF6B8A);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.8rem;box-shadow:0 0 40px rgba(255,23,68,.5);animation:heartbeat 1.8s ease infinite;">💌</div>
+    <h2 style="font-family:'Dancing Script',cursive;font-size:clamp(2rem,6vw,2.8rem);color:#FF1744;text-shadow:0 0 40px rgba(255,23,68,.4);margin-bottom:.6rem;">Your words, my treasure</h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:rgba(255,179,198,.7);font-style:italic;margin-bottom:2.5rem;letter-spacing:.04em;">Tell me what you felt — every word matters to me 🌹</p>
+
+    <div style="background:rgba(255,30,80,.09);border:1px solid rgba(255,107,138,.30);border-radius:1.8rem;padding:2.5rem 2rem;backdrop-filter:blur(24px);">
+      <input id="fbName" type="text" placeholder="Your name, my love 💕" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,107,138,.3);border-radius:999px;padding:.85rem 1.4rem;color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:1.2rem;outline:none;letter-spacing:.04em;" />
+      <textarea id="fbMsg" placeholder="Write what your heart says... ✨" rows="6" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,107,138,.3);border-radius:1.2rem;padding:1rem 1.4rem;color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.05rem;resize:none;outline:none;margin-bottom:1.4rem;letter-spacing:.04em;line-height:1.8;"></textarea>
+      <button onclick="sendFeedback()" style="width:100%;background:linear-gradient(135deg,#FF1744,#FF6B8A);border:none;border-radius:999px;padding:.9rem;color:#fff;font-family:'Dancing Script',cursive;font-size:1.3rem;cursor:pointer;box-shadow:0 8px 30px rgba(255,23,68,.45);transition:transform .2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">Send with Love 💋</button>
+      <div id="fbStatus" style="margin-top:1.2rem;font-family:'Cormorant Garamond',serif;font-size:1rem;color:rgba(255,179,198,.8);font-style:italic;min-height:1.5rem;"></div>
+    </div>
+
+    <button onclick="closeFeedback()" style="margin-top:2rem;background:transparent;border:1px solid rgba(255,107,138,.3);border-radius:999px;padding:.6rem 1.8rem;color:rgba(255,107,138,.6);font-family:'Cormorant Garamond',serif;font-size:.9rem;cursor:pointer;letter-spacing:.08em;transition:all .2s;" onmouseover="this.style.borderColor='#FF1744';this.style.color='#FF6B8A'" onmouseout="this.style.borderColor='rgba(255,107,138,.3)';this.style.color='rgba(255,107,138,.6)'">← Go Back</button>
+  </div>
+</div>
+
+<script>
+// ── CURSOR ──
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function ringLoop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(ringLoop)})();
+
+// ── STARFIELD ──
+const sc=document.getElementById('starfield'),sx=sc.getContext('2d');
+let sw,sh,stars=[];
+function resizeStar(){sw=sc.width=window.innerWidth;sh=sc.height=window.innerHeight}resizeStar();
+window.addEventListener('resize',resizeStar);
+for(let i=0;i<220;i++)stars.push({x:Math.random()*2560,y:Math.random()*1440,r:Math.random()*1.3+.2,a:Math.random(),da:(.005+Math.random()*.008)*(Math.random()<.5?1:-1)});
+function drawStars(){
+  sx.clearRect(0,0,sw,sh);
+  stars.forEach(s=>{
+    s.a=Math.max(.05,Math.min(.95,s.a+s.da));
+    if(s.a<=.05||s.a>=.95)s.da*=-1;
+    sx.beginPath();sx.arc(s.x%sw,s.y%sh,s.r,0,Math.PI*2);
+    sx.fillStyle=`rgba(255,200,215,${s.a})`;sx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ── PARTICLES ──
+const pc=document.getElementById('pcanvas'),px=pc.getContext('2d');
+let pw,ph,parts=[];
+const PCOLS=['#FF1744','#FF6B8A','#FFB3C6','#FFD4A8','#FF4569'];
+function resizeP(){pw=pc.width=window.innerWidth;ph=pc.height=window.innerHeight}resizeP();
+window.addEventListener('resize',resizeP);
+let pmx=-999,pmy=-999;
+document.addEventListener('mousemove',e=>{pmx=e.clientX;pmy=e.clientY});
+
+class Pt{
+  constructor(){this.reset()}
+  reset(){
+    this.x=Math.random()*pw;this.y=Math.random()*ph;
+    this.r=Math.random()*2+.4;
+    this.col=PCOLS[Math.random()*PCOLS.length|0];
+    this.vx=(Math.random()-.5)*.55;this.vy=(Math.random()-.5)*.55-.25;
+    this.al=Math.random()*.5+.15;
+    this.life=0;this.ml=Math.random()*280+160;
+    this.heart=Math.random()<.1;
+  }
+  tick(){
+    this.life++;
+    const dx=this.x-pmx,dy=this.y-pmy,d=Math.hypot(dx,dy);
+    if(d<130){this.vx+=dx/d*.28;this.vy+=dy/d*.28}
+    this.vx*=.985;this.vy*=.985;
+    this.x+=this.vx;this.y+=this.vy;
+    if(this.life>this.ml||this.x<0||this.x>pw||this.y<0||this.y>ph)this.reset();
+  }
+  draw(){
+    px.save();
+    px.globalAlpha=this.al*(1-this.life/this.ml);
+    px.fillStyle=this.col;
+    if(this.heart){
+      const s=this.r*2.2;
+      px.translate(this.x,this.y);
+      px.beginPath();
+      px.moveTo(0,-s*.35);
+      px.bezierCurveTo(s*.5,-s,s*1.1,s*.4,0,s);
+      px.bezierCurveTo(-s*1.1,s*.4,-s*.5,-s,0,-s*.35);
+      px.fill();
+    }else{
+      px.beginPath();px.arc(this.x,this.y,this.r,0,Math.PI*2);px.fill();
+    }
+    px.restore();
+  }
+}
+for(let i=0;i<180;i++)parts.push(new Pt());
+function animP(){
+  px.clearRect(0,0,pw,ph);
+  // lines
+  for(let i=0;i<parts.length;i++)for(let j=i+1;j<parts.length;j++){
+    const dx=parts[i].x-parts[j].x,dy=parts[i].y-parts[j].y,d=Math.hypot(dx,dy);
+    if(d<75){px.beginPath();px.strokeStyle=`rgba(255,107,138,${.12*(1-d/75)})`;px.lineWidth=.5;px.moveTo(parts[i].x,parts[i].y);px.lineTo(parts[j].x,parts[j].y);px.stroke()}
+  }
+  parts.forEach(p=>{p.tick();p.draw()});
+  requestAnimationFrame(animP);
+}
+animP();
+
+// ── 3D HEART ──
+const hc=document.getElementById('heart-canvas'),hx=hc.getContext('2d');
+let ha=0;
+function heartXY(t){
+  return[16*Math.pow(Math.sin(t),3),-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))];
+}
+function drawHeart(){
+  hx.clearRect(0,0,hc.width,hc.height);
+  const cx=hc.width/2,cy=hc.height/2,sc2=10.5;
+  ha+=.013;
+  const ca=Math.cos(ha),sa=Math.sin(ha);
+
+  // glow rings
+  for(let l=4;l>=0;l--){
+    const sc3=sc2+l*.5,al=.05+l*.04;
+    hx.save();hx.translate(cx,cy);hx.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=(i/200)*Math.PI*2;
+      const[x,y]=heartXY(t);
+      const x3=x*ca,z3=x*sa,p=1+z3*.014;
+      const fx=x3*sc3*p,fy=y*sc3*p;
+      i===0?hx.moveTo(fx,fy):hx.lineTo(fx,fy);
+    }
+    hx.closePath();
+    const g=hx.createRadialGradient(0,-30,0,0,0,150);
+    g.addColorStop(0,`rgba(255,100,140,${al+.08})`);
+    g.addColorStop(1,`rgba(255,23,68,${al})`);
+    hx.fillStyle=g;hx.fill();hx.restore();
+  }
+
+  // main body
+  hx.save();hx.translate(cx,cy);hx.beginPath();
+  for(let i=0;i<=320;i++){
+    const t=(i/320)*Math.PI*2;
+    const[x,y]=heartXY(t);
+    const x3=x*ca,z3=x*sa,p=1+z3*.016;
+    const fx=x3*sc2*p,fy=y*sc2*p;
+    i===0?hx.moveTo(fx,fy):hx.lineTo(fx,fy);
+  }
+  hx.closePath();
+  const mg=hx.createLinearGradient(-170,-150,170,150);
+  mg.addColorStop(0,'#FF6B8A');mg.addColorStop(.4,'#FF1744');mg.addColorStop(1,'#9B0020');
+  hx.fillStyle=mg;hx.shadowBlur=50;hx.shadowColor='rgba(255,23,68,.75)';hx.fill();
+
+  // shine
+  hx.beginPath();
+  for(let i=0;i<=200;i++){
+    const t=(i/200)*Math.PI*2;
+    const[x,y]=heartXY(t);
+    const fx=x*ca*(sc2*.5),fy=y*(sc2*.5)-14;
+    i===0?hx.moveTo(fx,fy):hx.lineTo(fx,fy);
+  }
+  hx.closePath();
+  const sg=hx.createRadialGradient(-18,-55,0,0,0,90);
+  sg.addColorStop(0,'rgba(255,255,255,.25)');sg.addColorStop(1,'rgba(255,255,255,0)');
+  hx.fillStyle=sg;hx.shadowBlur=0;hx.fill();
+  hx.restore();
+
+  // floating kiss emoji near heart
+  hx.font='24px serif';
+  hx.globalAlpha=.35+.15*Math.sin(ha*2);
+  hx.fillText('💋',cx+130,cy-30+10*Math.sin(ha));
+  hx.fillText('💋',cx-155,cy+40+8*Math.cos(ha*1.3));
+  hx.globalAlpha=1;
+
+  requestAnimationFrame(drawHeart);
+}
+drawHeart();
+
+// ── COUNTER ──
+const start=new Date('2025-02-08T00:00:00');
+function tick(){
+  const d=Date.now()-start;
+  const days=Math.floor(d/86400000);
+  const hrs=Math.floor((d%86400000)/3600000);
+  const min=Math.floor((d%3600000)/60000);
+  const sec=Math.floor((d%60000)/1000);
+  document.getElementById('cd').textContent=days.toLocaleString();
+  document.getElementById('ch').textContent=String(hrs).padStart(2,'0');
+  document.getElementById('cm').textContent=String(min).padStart(2,'0');
+  document.getElementById('cs').textContent=String(sec).padStart(2,'0');
+}
+tick();setInterval(tick,1000);
+
+// ── FLOATING LIP BG ──
+const lb=document.getElementById('lipBg');
+const lipPositions=[[10,8],[75,20],[30,55],[60,70],[85,40],[15,80],[50,15],[90,85]];
+lipPositions.forEach(([l,t],i)=>{
+  const s=document.createElement('span');
+  s.className='lip-mark';
+  s.textContent='💋';
+  s.style.left=l+'%';s.style.top=t+'%';
+  s.style.animationDelay=(i*.9)+'s';
+  s.style.fontSize=(1.8+Math.random()*1.5)+'rem';
+  lb.appendChild(s);
+});
+
+// ── LIP STAMP CLICK ──
+document.querySelectorAll('.lip-stamp').forEach(el=>{
+  el.addEventListener('click',()=>{
+    el.style.transform='scale(1.5) rotate(15deg)';
+    setTimeout(()=>el.style.transform='',300);
+  });
+});
+
+// ── SCROLL REVEAL ──
+const obs=new IntersectionObserver(en=>{
+  en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target)}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+// ── FEEDBACK PAGE ──
+function openFeedback(){
+  document.getElementById('feedbackPage').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeFeedback(){
+  document.getElementById('feedbackPage').style.display='none';
+  document.body.style.overflow='';
+}
+async function sendFeedback(){
+  const name=document.getElementById('fbName').value.trim();
+  const msg=document.getElementById('fbMsg').value.trim();
+  const status=document.getElementById('fbStatus');
+  if(!name||!msg){status.textContent='Please fill in both fields 💕';return;}
+  status.textContent='Sending your love... 💌';
+  try{
+    const res=await fetch('https://formsubmit.co/ajax/chaudharyhemendra001@gmail.com',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({name,message:msg,_subject:'💌 Gauravi ne feedback diya!'})
+    });
+    const data=await res.json();
+    if(data.success){
+      status.innerHTML='Sent with love! 💖 Hemendra ko mil jayega 🌹';
+      document.getElementById('fbName').value='';
+      document.getElementById('fbMsg').value='';
+    }else{status.textContent='Kuch problem aayi, dobara try karo 💕';}
+  }catch(e){status.textContent='Network error, please try again 💕';}
+}
+</script>
+</body>
+</html>
